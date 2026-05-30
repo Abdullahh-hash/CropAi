@@ -9,3 +9,4 @@ pydantic-settings==2.1.0
 aiosqlite==0.19.0
 sqlalchemy==2.0.23
 psutil==5.9.6
+libsql-client==0.4.0
