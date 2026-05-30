@@ -1,33 +1,32 @@
 import os
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
+# Detect automatically if running on the cloud serverless environment
+IS_VERCEL = os.getenv("VERCEL")
+
+if IS_VERCEL:
+    # Use a secure, ephemeral async in-memory space for serverless live operations
+    DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+else:
+    # Use your persistent physical database file on your local desktop machine
+    DATABASE_URL = "sqlite+aiosqlite:///./sqlite.db"
+
+engine = create_async_engine(
+    DATABASE_URL, 
+    connect_args={"check_same_thread": False}
+)
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    autocommit=False,
+    autoflush=False
+)
 
 Base = declarative_base()
 
-# 1. A perfectly safe fake database engine that will never crash on Vercel
-class MockAsyncSession:
-    async def __aenter__(self): return self
-    async def __aexit__(self, exc_type, exc_val, exc_tb): pass
-    
-    def add(self, instance): pass
-    async def commit(self): pass
-    async def refresh(self, instance): pass
-    
-    def query(self, *args, **kwargs): return self
-    def filter(self, *args, **kwargs): return self
-    def order_by(self, *args, **kwargs): return self
-    def limit(self, *args, **kwargs): return self
-    def all(self): return []
-
-# 2. Return the un-crashable mock session safely
-def SessionLocal():
-    return MockAsyncSession()
-
-# 3. Dummy db object to satisfy 'from app.database import db' in main.py
-class MockDB:
-    def __init__(self):
-        pass
-db = MockDB()
-
-# 4. Empty startup function so main.py's init_db() passes with 0 friction
-def init_db():
-    pass
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
