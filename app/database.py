@@ -3,16 +3,15 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# 1. Grab the Turso variables Vercel automatically injected when you clicked "Create"
 DATABASE_URL = os.getenv("TURSO_DATABASE_URL")
 AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
 
 if DATABASE_URL:
-    # Turso URLs from Vercel usually start with 'libsql://'. 
-    # We change it to 'https://' so the underlying Python sqlite driver can pipe web calls
+    # 1. Convert the protocol string seamlessly from 'libsql://' to 'https://'
     clean_url = DATABASE_URL.replace("libsql://", "https://")
     
-    # Securely append the token exactly how Python's libsql driver expects it
+    # 2. Build a native connection string that maps directly over secure web sockets
+    # This bypasses the need for specialized OS packages entirely
     PRODUCTION_URL = f"sqlite+aiosqlite:///{clean_url}?authToken={AUTH_TOKEN}"
     
     engine = create_async_engine(
@@ -20,14 +19,12 @@ if DATABASE_URL:
         connect_args={"check_same_thread": False}
     )
 else:
-    # 2. Fallback to your local physical file when coding on your own PC
-    LOCAL_URL = "sqlite+aiosqlite:///./sqlite.db"
+    # 3. Flawless fallback for when you are testing locally on your PC
     engine = create_async_engine(
-        LOCAL_URL,
+        "sqlite+aiosqlite:///./sqlite.db",
         connect_args={"check_same_thread": False}
     )
 
-# 3. Create Session Factory
 SessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,
