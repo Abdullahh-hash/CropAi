@@ -1,30 +1,35 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# Check if we are running in production on Vercel
+# Check if running live on Vercel production
 IS_VERCEL = os.getenv("VERCEL") or os.getenv("TURSO_DATABASE_URL")
 
 if IS_VERCEL:
-    # Production: Use an optimized, highly isolated in-memory engine 
-    # This completely completely avoids Vercel's read-only file system restriction
-    DATABASE_URL = "sqlite:///:memory:"
-    engine = create_engine(
-        DATABASE_URL, 
-        connect_args={"check_same_thread": False}
-    )
+    # Production Async Routing: Uses an isolated async in-memory instance
+    DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 else:
-    # Local Development: Read/Write to your physical project folder file
-    DATABASE_URL = "sqlite:///./sqlite.db"
-    engine = create_engine(
-        DATABASE_URL, 
-        connect_args={"check_same_thread": False}
-    )
+    # Local Desktop Development Async Routing
+    DATABASE_URL = "sqlite+aiosqlite:///./sqlite.db"
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# 1. Initialize the Asynchronous Engine
+engine = create_async_engine(
+    DATABASE_URL, 
+    connect_args={"check_same_thread": False}
+)
+
+# 2. Build the Async Session Factory
+SessionLocal = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    autocommit=False,
+    autoflush=False
+)
+
 Base = declarative_base()
 
-def init_db():
-    # Automatically schema-map and spin up tables into memory or on disk safely
-    Base.metadata.create_all(bind=engine)
+async def init_db():
+    # Asynchronously spin up the metadata schema mapping tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
