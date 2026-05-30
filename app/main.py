@@ -1,32 +1,20 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path
-from datetime import datetime
-
-from app.config import settings
+from contextlib import asynccontextmanager
 from app.database import init_db
-from app.routes import scanner, admin
 
-# Initialize database
-init_db()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # This runs asynchronously the exact moment the serverless container wakes up
+    try:
+        await init_db()
+    except Exception as e:
+        print(f"Database initialization skipped or failed: {e}")
+    yield
+    # Clean up operations go here if needed
 
 app = FastAPI(
-    title=settings.APP_NAME,
-    description=settings.DESCRIPTION,
-    version=settings.APP_VERSION,
-    docs_url="/docs",
-    redoc_url="/redoc",
-    redirect_slashes=True
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    title="Crop Disease Detection",
+    lifespan=lifespan
 )
 
 static_dir = Path(__file__).parent.parent / "static"
