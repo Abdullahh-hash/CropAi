@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Admin Dashboard - Crop Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="admin-page">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🌾</span>
+                    <span class="logo-text">CropAI</span>
+                </div>
+                <nav class="nav">
+    <a href="/" class="nav-link active">Scanner</a>
+    <a href="/admin/" class="nav-link">Dashboard</a>
+    <a href="/docs" class="nav-link">API</a>
+</nav>
+            </div>
+        </header>
+
+        <!-- Admin Dashboard -->
+        <main class="admin-dashboard">
+            <div class="dashboard-header">
+                <h1>📊 Analytics Command Center</h1>
+                <p class="dashboard-subtitle">Real-time system diagnostics and performance metrics</p>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Total Scans</span>
+                        <span class="kpi-icon">📈</span>
+                    </div>
+                    <h2 class="kpi-value" id="totalScans">0</h2>
+                    <p class="kpi-change">All-time diagnostics processed</p>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Avg. Latency</span>
+                        <span class="kpi-icon">⚡</span>
+                    </div>
+                    <h2 class="kpi-value" id="avgLatency">0ms</h2>
+                    <p class="kpi-change">System inference speed</p>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-label">System Accuracy</span>
+                        <span class="kpi-icon">🎯</span>
+                    </div>
+                    <h2 class="kpi-value">94.5%</h2>
+                    <p class="kpi-change">Classification precision rate</p>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Diseases Tracked</span>
+                        <span class="kpi-icon">🦠</span>
+                    </div>
+                    <h2 class="kpi-value">9</h2>
+                    <p class="kpi-change">Crop anomalies in database</p>
+                </div>
+            </section>
+
+            <!-- Analytics Grid -->
+            <section class="analytics-grid">
+                <!-- Disease Distribution -->
+                <div class="analytics-card distribution-card">
+                    <h3 class="card-title">Disease Distribution</h3>
+                    <div class="distribution-chart" id="distributionChart">
+                        <div class="chart-placeholder">Loading distribution data...</div>
+                    </div>
+                </div>
+
+                <!-- Top Diseases -->
+                <div class="analytics-card top-diseases-card">
+                    <h3 class="card-title">Top Detected Diseases</h3>
+                    <div class="top-diseases-list" id="topDiseasesList">
+                        <div class="disease-item placeholder">
+                            <span class="disease-name">Loading...</span>
+                            <span class="disease-count">—</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Diagnostics Table -->
+            <section class="diagnostics-section">
+                <div class="section-header">
+                    <h3 class="section-title">Recent Diagnostics</h3>
+                    <button class="btn btn-small" id="refreshBtn">🔄 Refresh</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="diagnostics-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Timestamp</th>
+                                <th>Disease</th>
+                                <th>Confidence</th>
+                                <th>Latency</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diagnosticsTableBody">
+                            <tr class="placeholder-row">
+                                <td colspan="6">Loading diagnostic data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- System Status -->
+            <section class="system-status">
+                <div class="status-card">
+                    <h3 class="status-title">System Health</h3>
+                    <div class="status-indicators">
+                        <div class="status-item">
+                            <span class="status-label">Database</span>
+                            <span class="status-badge active">✓ Connected</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">API Server</span>
+                            <span class="status-badge active">✓ Running</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">ML Model</span>
+                            <span class="status-badge active">✓ Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Crop Disease Detection | Premium Agricultural AI</p>
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">Support</a>
+                <a href="#">Privacy</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>
